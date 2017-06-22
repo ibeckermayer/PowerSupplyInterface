@@ -8,13 +8,13 @@ tn = telnetlib.Telnet(HOST, PORT)
 
 # read until the first period (telnet connection causes an intro statement to print out)
 # this is necessary since we will use '.' to identify the voltage and current query responses
-tn.read_until('.')
+print tn.read_until('.', 5)
 
 # set the currents and voltages
-CURRENT1 = 10.2
-CURRENT2 = 10.2
-VOLTAGE1 = 6.0
-VOLTAGE2 = 10.0
+CURRENT1 = 10.0
+CURRENT2 = 10.0
+VOLTAGE1 = 7.0
+VOLTAGE2 = 7.0
 
 # telnet needs some time in between each command or else it doesn't function properly
 SLEEP_TIME = 0.5
