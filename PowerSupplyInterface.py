@@ -1,12 +1,6 @@
 import telnetlib
 import time
 
-class PowerSupplyInterface:
-	def __init__(self):
-		self.ip   = "142.103.235.210"
-		self.port = "5024"
-		self.tn = telnetlib.Telnet(self.ip, self.port)
-
 # setup telnet connection with the power supply
 HOST = "142.103.235.210"
 PORT = "5024"
