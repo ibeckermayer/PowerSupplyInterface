@@ -1,36 +1,58 @@
 import telnetlib
 import time
 
-# setup telnet connection with the power supply
-HOST = "142.103.235.210"
-PORT = "5024"
-tn = telnetlib.Telnet(HOST, PORT)
+class PowerSupplyInterface:
+	# initialize PSI connection with the proper host ip and port number, voltages and currents to 0	
+	def __init__(self):
+		self.host = "142.103.235.210" # Set using manual control
+		self.port = "5024"	      # As described in user manual
+		self.current1 = None
+		self.voltage1 = None		
+		self.current2 = None
+		self.voltage2 = None
+		self.SLEEP_TIME = 0.5 # telnet is ancient and therefore needs some time to send messages
+		
+		#initialize connection
+		self.tn = telnetlib.Telnet(self.host, self.port)
+		time.sleep(self.SLEEP_TIME)
+		
+		# read until the first period (telnet connection causes an intro statement to print out)
+		# this is necessary since we will use '.' to identify the voltage and current query responses
+		self.tn.read_until('.', 5)
+		time.sleep(self.SLEEP_TIME)
 
-# read until the first period (telnet connection causes an intro statement to print out)
-# this is necessary since we will use '.' to identify the voltage and current query responses
-print tn.read_until('.', 5)
+	# set voltage on channel 1 or 2
+	def set_voltage(self, chan, voltage):
+		if chan==1:
+			print "channel1 voltage!"
+			self.voltage1 = voltage
+			self.tn.write("VOLT " + str(self.voltage1) + "\r\n")
+			time.sleep(self.SLEEP_TIME)
+		if chan==2:
+			self.voltage2 = voltage
+			self.tn.write("VOLT2 " + str(self.voltage2) + "\r\n")
+			time.sleep(self.SLEEP_TIME)
 
-# set the currents and voltages
-CURRENT1 = 10.0
-CURRENT2 = 10.0
-VOLTAGE1 = 7.0
-VOLTAGE2 = 7.0
+	# set current on channel 1 or 2
+	def set_current(self, chan, current):
+		if chan==1:
+			self.current1 = current
+			self.tn.write("CURR " + str(self.current1) + "\r\n")
+			time.sleep(self.SLEEP_TIME)
+		if chan==2:
+			self.current2 = current
+			self.tn.write("CURR2 " + str(self.current2) + "\r\n")
+			time.sleep(self.SLEEP_TIME)
 
-# telnet needs some time in between each command or else it doesn't function properly
-SLEEP_TIME = 0.5
+	# close the telnet connection
+	def close(self):
+		self.tn.close()
 
-tn.write("CURR "  + str(CURRENT1)+ "\r\n")
-time.sleep(SLEEP_TIME)
-tn.write("CURR2 " + str(CURRENT2)+ "\r\n")
-time.sleep(SLEEP_TIME)
-tn.write("VOLT "   + str(VOLTAGE1)+ "\r\n")
-time.sleep(SLEEP_TIME)
-tn.write("VOLT2 "  + str(VOLTAGE2)+ "\r\n")
-time.sleep(SLEEP_TIME)
-
-
-
-# close telnet connection
-tn.close()
-
+if __name__ == "__main__":
+	psi = PowerSupplyInterface()
+	psi.set_voltage(1,6)
+	psi.set_voltage(2,10)
+	psi.set_current(1,10.2)
+	psi.set_current(2,10.2)
+	psi.close()
 
