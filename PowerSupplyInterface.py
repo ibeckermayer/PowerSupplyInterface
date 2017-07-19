@@ -1,3 +1,5 @@
+from PowerSupplies import BKPRECISION9173
+
 if __name__ == "__main__":
     bkp = BKPRECISION9173()
     bkp.set_voltage(1, 6)
