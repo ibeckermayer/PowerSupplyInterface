@@ -2,13 +2,15 @@ import unittest as ut
 from unittest import TestCase
 from BKPRECISION9173 import BKPRECISION9173
 
+BKIP = "142.103.235.210"
+
 class TestBKPRECISION9173(TestCase):
     @ut.skip("need to write initialize values function before testing")
     def test_init_connection(self):
         self.fail()
 
     def test_set_voltage(self):
-        bkp = BKPRECISION9173()
+        bkp = BKPRECISION9173(BKIP)
         bkp.set_voltage(1, 5.2)
         bkp.set_voltage(2, 5.2)
         self.assertEqual(bkp.get_set_voltage(1), 5.2)
@@ -20,7 +22,7 @@ class TestBKPRECISION9173(TestCase):
         bkp.close()
 
     def test_set_current(self):
-        bkp = BKPRECISION9173()
+        bkp = BKPRECISION9173(BKIP)
         bkp.set_current(1, 1)
         bkp.set_current(2, 1)
         self.assertEqual(bkp.get_set_current(1), 1)
@@ -47,4 +49,7 @@ class TestBKPRECISION9173(TestCase):
         self.fail()
 
     def test_get_set_voltage(self):
+        self.fail()
+
+    def test_ChannelError(self):
         self.fail()
