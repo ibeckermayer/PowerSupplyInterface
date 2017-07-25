@@ -15,6 +15,7 @@ class BKPRECISION9173:
         self.chan1status = None  # either ON or OFF
         self.chan2status = None  # either ON or OFF
         self.executing = False  # may be necessary later to avoid data acquisition / command overlap
+        self.init_connection()
 
     def init_connection(self):
         """
@@ -58,7 +59,6 @@ set voltage on channel 1 or 2
             self.voltageSetting2 = voltage
             self.send_command("VOLT2 " + str(self.voltageSetting2))
 
-    # set current on channel 1 or 2
     def set_current(self, chan, current):
         """
 set current on channel 1 or 2
@@ -98,45 +98,76 @@ close the telnet connection
         """
         self.tn.close()
 
-#     def measure_current(self, chan):
-#         """
-# Function to measure the current at the output of one of the channels.
-# Note that this is distinct from get_set_current, which checks what the
-# current is set to be at (rather than what its actually at).
-#         :param chan: int (1 or 2)
-#         :return: float
-#         """
-#         if chan == 1:
-#             self.send_command("MEAS CURR?")
-#         if chan == 2:
-#             self.send_command("MEAS CURR2?")
-#
-#         before_decimal = self.read_until(".")
-#         after_decimal = self.read_until("\r")[0:3]
-#
-#         if before_decimal[-3] == "\n":  # check if it's 1 digit before the decimal
-#             before_decimal = before_decimal[-2]
-#         else:
-#             before_decimal = before_decimal[-3:-1]
-#
-#         return float(before_decimal + "." + after_decimal)
-#
-#     def measure_voltage(self, chan):
-#         """
-# Function to measure the voltage at the output of one of the channels.
-# Note that this is distinct from get_set_voltage, which checks what the
-# voltage is set to be at (rather than what its actually at).
-#         :param chan: int (1 or 2)
-#         :return: float
-#         """
+    def extract_float_readback(self):
+        """
+After asking for a measurement from the system, extract the readout with this algorithm
+        :return: float
+        """
+        before_decimal = self.read_until(".")
+        after_decimal = self.read_until("\r")[0:3]
+        if before_decimal[-3] == "\n":  # check if it's 1 digit before the decimal
+            before_decimal = before_decimal[-2]
+        else:
+            before_decimal = before_decimal[-3:-1]
+        return float(before_decimal + "." + after_decimal)
 
+    def measure_current(self, chan):
+        """
+Function to measure the current at the output of one of the channels.
+Note that this is distinct from get_set_current, which checks what the
+current is set to be at (rather than what its actually at).
+        :param chan: int (1 or 2)
+        :return: float
+        """
+        if chan == 1:
+            self.send_command("MEAS CURR?")
+        if chan == 2:
+            self.send_command("MEAS CURR2?")
+        return self.extract_float_readback()
 
+    def measure_voltage(self, chan):
+        """
+Function to measure the voltage at the output of one of the channels.
+Note that this is distinct from get_set_voltage, which checks what the
+voltage is set to be at (rather than what its actually at).
+        :param chan: int (1 or 2)
+        :return: float
+        """
+        if chan == 1:
+            self.send_command("MEAS VOLT?")
+        if chan == 2:
+            self.send_command("MEAS VOLT2?")
+        return self.extract_float_readback()
 
+    def get_set_current(self, chan):
+        """
+Function to get the current the machine is set to run at
+        :param chan: int (1 or 2)
+        :return: float
+        """
+        if chan == 1:
+            self.send_command("CURR?")
+        if chan == 2:
+            self.send_command("CURR2?")
+        return self.extract_float_readback()
 
-        # TODO: measure_voltage(), get_set_current(), get_set_voltage()
-        # TODO: make BKPRECISION9173 it's own .py file (look up how to import self made modules in python)
-        # TODO: make a real test script, with unit tests and real ways to fail
+    def get_set_voltage(self, chan):
+        """
+Function to get the voltage the machine is set to run at
+        :param chan: int (1 or 2)
+        :return: float
+        """
+        if chan == 1:
+            self.send_command("VOLT?")
+        if chan == 2:
+            self.send_command("VOLT2?")
+        return self.extract_float_readback()
+
         # for the sake of good coding style
         # for the sake of learning how to use this
         # TODO: make some functions for initialization, which measure and set the fields
-
+        # TODO: choose which fields you want to have, add them to initialization and to the test functions
+            # I want a measured current and voltage field as well as a set current and voltage field
+            # I want to initialize the class with the IP address
+            # When I change the current or the voltage, I want to measure the set current/voltage (and make the set volt/curr = to this)
+                # If what I set and what I read is different, I want to throw an error that says the voltage/current was not set properly
