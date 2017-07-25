@@ -8,7 +8,7 @@ class BKPRECISION9173:
 initialize BKP connection with the proper host ip and port number
         :param host: string with ip address of the device
         """
-        self.SLEEP_TIME = 0.5  # telnet is ancient and therefore needs some time to send messages
+        self.SLEEP_TIME = 1  # telnet is ancient and therefore needs some time to send messages
         self.host = host  # Set using manual control
         self.port = "5024"  # As described in user manual
         self.currentSetting1 = None
@@ -40,14 +40,32 @@ function to read all the values from the BKP and set the fields upon a new conne
         self.chan1on = self.is_chan_on(1)
         self.chan2on = self.is_chan_on(2)
 
-    # TODO
     def is_chan_on(self, chan):
         """
 check if the channel is on
         :param chan: int (1 or 2)
         :return: boolean
         """
-        return False
+        if chan == 1:
+            self.send_command("OUT?")
+        elif chan == 2:
+            self.send_command("OUT2?")
+        else:
+            raise ChannelError(chan)
+
+        onOrOff = self.read_on_or_off()
+        if onOrOff == "ON":
+            return True
+        elif onOrOff == "OFF":
+            return False
+
+    def read_on_or_off(self):
+        self.read_until("O")
+        string2check = self.read_until("\r")
+        if string2check[0] == "N":
+            return "ON"
+        elif string2check[0] == "F":
+            return "OFF"
 
     def init_connection(self):
         """
@@ -144,6 +162,7 @@ After asking for a measurement from the system, extract the readout with this al
         :return: float
         """
         before_decimal = self.read_until(".")
+        print "before _decimal = " + before_decimal #debug
         after_decimal = self.read_until("\r")[0:3]
         if before_decimal[-3] == "\n":  # check if it's 1 digit before the decimal
             before_decimal = before_decimal[-2]
