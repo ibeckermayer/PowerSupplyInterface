@@ -2,13 +2,14 @@ import telnetlib
 import time
 from Errors import *
 
+
 class BKPRECISION9173:
     def __init__(self, host):
         """
 initialize BKP connection with the proper host ip and port number
         :param host: string with ip address of the device
         """
-        self.SLEEP_TIME = 1  # telnet is ancient and therefore needs some time to send messages
+        self.SLEEP_TIME = .5  # telnet is ancient and therefore needs some time to send messages
         self.host = host  # Set using manual control
         self.port = "5024"  # As described in user manual
         self.currentSetting1 = None
@@ -162,7 +163,8 @@ After asking for a measurement from the system, extract the readout with this al
         :return: float
         """
         before_decimal = self.read_until(".")
-        print "before _decimal = " + before_decimal #debug
+        if before_decimal[-2] == ">":  # strange yet somewhat common error...
+            before_decimal = self.read_until(".")
         after_decimal = self.read_until("\r")[0:3]
         if before_decimal[-3] == "\n":  # check if it's 1 digit before the decimal
             before_decimal = before_decimal[-2]
