@@ -22,7 +22,7 @@ initialize BKP connection with the proper host ip and port number
         self.voltageMeasured2 = None
         self.chan1on = None  # either True or False
         self.chan2on = None  # either True or False
-        self.executing = False  # may be necessary later to avoid data acquisition / command overlap
+        # self.executing = False  # may be necessary later to avoid data acquisition / command overlap
         self.init_connection()
         self.read_all_vals()
 
@@ -147,7 +147,7 @@ turn channel 1 or 2 ON
                 raise ChangeValueError("ON", "OFF")
         elif chan == 2:
             self.send_command("OUT2 ON")
-            self.chan1on = self.is_chan_on(2)
+            self.chan2on = self.is_chan_on(2)
             if not self.chan2on:
                 raise ChangeValueError("ON", "OFF")
         else:
@@ -165,7 +165,7 @@ turn channel 1 or 2 OFF
                 raise ChangeValueError("OFF", "ON")
         elif chan == 2:
             self.send_command("OUT2 OFF")
-            self.chan1on = self.is_chan_on(2)
+            self.chan2on = self.is_chan_on(2)
             if self.chan2on:
                 raise ChangeValueError("OFF", "ON")
         else:
@@ -176,6 +176,8 @@ turn channel 1 or 2 OFF
 close the telnet connection
         """
         self.tn.close()
+        time.sleep(self.SLEEP_TIME)
+
 
     def extract_float_readback(self):
         """
