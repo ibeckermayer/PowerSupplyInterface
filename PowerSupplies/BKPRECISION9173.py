@@ -104,11 +104,15 @@ set voltage on channel 1 or 2
         :param voltage: float or int
         """
         if chan == 1:
-            self.voltageSetting1 = voltage
-            self.send_command("VOLT " + str(self.voltageSetting1))
+            self.send_command("VOLT " + str(voltage))
+            self.voltageSetting1 = self.get_set_voltage(1)
+            if self.voltageSetting1 != voltage:
+                raise ChangeValueError(voltage, self.voltageSetting1)
         elif chan == 2:
-            self.voltageSetting2 = voltage
-            self.send_command("VOLT2 " + str(self.voltageSetting2))
+            self.send_command("VOLT2 " + str(voltage))
+            self.voltageSetting2 = self.get_set_voltage(2)
+            if self.voltageSetting2 != voltage:
+                raise ChangeValueError(voltage, self.voltageSetting2)
         else:
             raise ChannelError(chan)
 
@@ -119,11 +123,15 @@ set current on channel 1 or 2
         :param current: float or int
         """
         if chan == 1:
-            self.currentSetting1 = current
-            self.send_command("CURR " + str(self.currentSetting1))
+            self.send_command("CURR " + str(current))
+            self.currentSetting1 = self.get_set_current(1)
+            if self.currentSetting1 != current:
+                raise ChangeValueError(current, self.currentSetting1)
         elif chan == 2:
-            self.currentSetting2 = current
-            self.send_command("CURR2 " + str(self.currentSetting2))
+            self.send_command("CURR2 " + str(current))
+            self.currentSetting2 = self.get_set_current(2)
+            if self.currentSetting2 != current:
+                raise ChangeValueError(current, self.currentSetting2)
         else:
             raise ChannelError(chan)
 
@@ -134,8 +142,14 @@ turn channel 1 or 2 ON
         """
         if chan == 1:
             self.send_command("OUT ON")
+            self.chan1on = self.is_chan_on(1)
+            if not self.chan1on:
+                raise ChangeValueError("ON", "OFF")
         elif chan == 2:
             self.send_command("OUT2 ON")
+            self.chan1on = self.is_chan_on(2)
+            if not self.chan2on:
+                raise ChangeValueError("ON", "OFF")
         else:
             raise ChannelError(chan)
 
@@ -146,8 +160,14 @@ turn channel 1 or 2 OFF
         """
         if chan == 1:
             self.send_command("OUT OFF")
+            self.chan1on = self.is_chan_on(1)
+            if self.chan1on:
+                raise ChangeValueError("OFF", "ON")
         elif chan == 2:
             self.send_command("OUT2 OFF")
+            self.chan1on = self.is_chan_on(2)
+            if self.chan2on:
+                raise ChangeValueError("OFF", "ON")
         else:
             raise ChannelError(chan)
 
@@ -232,13 +252,3 @@ Function to get the voltage the machine is set to run at
             raise ChannelError(chan)
         return self.extract_float_readback()
 
-        # for the sake of good coding style
-        # for the sake of learning how to use this
-        # TODO: make a function to test if channels are on or not
-        # TODO: make some functions for initialization, which measure and set the fields
-        # TODO: choose which fields you want to have, add them to initialization and to the test functions
-        # I want a measured current and voltage field as well as a set current and voltage field
-        # I want to initialize the class with the IP address
-        # When I change the current or the voltage, I want to measure the set current/voltage (and make the set volt/curr = to this)
-        # If what I set and what I read is different, I want to throw an error that says the voltage/current was not set properly
-        # TODO: add errors for bad channel numbers and bad curr/volt values, and test these errors
