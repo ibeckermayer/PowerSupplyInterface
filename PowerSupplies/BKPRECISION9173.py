@@ -12,6 +12,7 @@ initialize BKP connection with the proper host ip and port number
         self.SLEEP_TIME = .5  # telnet is ancient and therefore needs some time to send messages
         self.host = host  # Set using manual control
         self.port = "5024"  # As described in user manual
+        self.name = "BK PRECISION 9173"
         self.currentSetting1 = None
         self.voltageSetting1 = None
         self.currentSetting2 = None
