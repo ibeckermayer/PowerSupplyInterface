@@ -22,7 +22,7 @@ initialize BKP connection with the proper host ip and port number
         self.voltageMeasured2 = None
         self.chan1on = None  # either True or False
         self.chan2on = None  # either True or False
-        # self.executing = False  # may be necessary later to avoid data acquisition / command overlap
+        self.executing = False  # necessary to avoid data acquisition / command overlap
         self.init_connection()
         self.read_all_vals()
 
@@ -68,6 +68,7 @@ check if the channel is on
         elif string2check[0] == "F":
             return "OFF"
 
+    # noinspection PyAttributeOutsideInit
     def init_connection(self):
         """
 initialize the telnet connection
@@ -84,8 +85,10 @@ initialize the telnet connection
 function for sending commands via telnet connection
         :param command: string
         """
+        self.executing = True
         self.tn.write(command + "\r\n")  # always need "\r\n" at the end to actually send
         time.sleep(self.SLEEP_TIME)  # always want to sleep after to ensure command has time to be received
+        self.executing = False
 
     def read_until(self, string):
         """
@@ -93,9 +96,12 @@ Function for reading back until a given string, returns everything read back
         :param string: string
         :return: string
         """
+        self.executing = True
         return_string = self.tn.read_until(string, 5)
         time.sleep(self.SLEEP_TIME)  # always sleep after to make sure timing is ok
+        self.executing = False
         return return_string
+
 
     def set_voltage(self, chan, voltage):
         """
@@ -178,7 +184,6 @@ close the telnet connection
         self.tn.close()
         time.sleep(self.SLEEP_TIME)
 
-
     def extract_float_readback(self):
         """
 After asking for a measurement from the system, extract the readout with this algorithm
@@ -253,4 +258,3 @@ Function to get the voltage the machine is set to run at
         else:
             raise ChannelError(chan)
         return self.extract_float_readback()
-
