@@ -6,8 +6,9 @@ import Tkinter as tk
 
 
 class UI(tk.Frame):
-    def __init__(self):
-        tk.Frame.__init__(self)
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
         self.initUI()
 
     def initUI(self):
@@ -29,7 +30,7 @@ class UI(tk.Frame):
 
 def main():
     root = tk.Tk()
-    ui = UI()
+    app = UI(root)
     root.mainloop()
 
 
