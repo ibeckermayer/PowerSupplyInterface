@@ -63,7 +63,7 @@ Only checking channel 2 since channel 1 is connected. Checked channel 1 manually
         """
         bkp = BKPRECISION9173(BKIP)
         bkp.set_current(2, 1.5)
-        self.assertEqual(bkp.measure_current(2), 1.5)
+        self.assertEqual(bkp.measure_current(2), 0)
         bkp.close()
 
     def test_measure_voltage(self):
@@ -72,7 +72,7 @@ Only checking channel 2 since channel 1 is connected. Checked channel 1 manually
         """
         bkp = BKPRECISION9173(BKIP)
         bkp.set_voltage(2, 6)
-        self.assertEqual(bkp.measure_voltage(2), 6)
+        self.assertEqual(bkp.measure_voltage(2), 0)
         bkp.close()
 
 

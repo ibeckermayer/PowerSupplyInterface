@@ -1,14 +1,19 @@
 """
-Code modified largely from: http://zetcode.com/gui/tkinter/
+Useful links to understand the code:
+http://zetcode.com/gui/tkinter/
+http://effbot.org/tkinterbook/
+https://www.tutorialspoint.com/python/python_gui_programming.htm
 """
 
 import Tkinter as Tk
+from PowerSupplies import BKPRECISION9173 as Bkp
 
 
 class GUI(Tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, power_supply):
         Tk.Frame.__init__(self, parent)
 
+        self.bkp = power_supply
         self.parent = parent
         self.screenwidth = self.parent.winfo_screenwidth()
         self.screenheight = self.parent.winfo_screenheight()
@@ -38,7 +43,7 @@ class GUI(Tk.Frame):
         ps_lab.pack(side=Tk.LEFT, padx=self.relativePadx * 5)
         ps_lab.config(font=("Arial", 22))
         # Create name of the power supply
-        name_lab = Tk.Label(label_frame, text="BK PRECISION 9173")
+        name_lab = Tk.Label(label_frame, text=self.bkp.name)
         name_lab.place(relx=0.5, rely=0.5, anchor=Tk.CENTER)
         name_lab.config(font=("Arial", 22))
 
@@ -49,7 +54,7 @@ class GUI(Tk.Frame):
         ip_lab.pack(side=Tk.TOP)  # , anchor=tk.E, padx=self.relativePadx*5)
         ip_lab.config(font=("Arial", 22))
         ip = Tk.Entry(ipFrame)
-        ip.insert(0, "142.103.235.210")
+        ip.insert(0, self.bkp.host)
         ip.configure(state='readonly', font=("Arial", 14), justify="center")
         ip.pack(side=Tk.BOTTOM, anchor=Tk.E, padx=self.relativePadx * 5)
 
@@ -108,6 +113,8 @@ class GUI(Tk.Frame):
         set_ent_frame1 = Tk.Frame(set1_frame)
         setvol1_ent = Tk.Entry(set_ent_frame1, justify="center")
         setcur1_ent = Tk.Entry(set_ent_frame1, justify="center")
+        setvol1_ent.insert(0, self.bkp.voltageSetting1)
+        setcur1_ent.insert(0, self.bkp.currentSetting1)
         v1s = Tk.Label(set_ent_frame1, text="V", font=("Arial", LARGE_TEXT_SIZE))
         a1s = Tk.Label(set_ent_frame1, text="A", font=("Arial", LARGE_TEXT_SIZE))
         padmult = 5
@@ -126,6 +133,8 @@ class GUI(Tk.Frame):
         set_ent_frame2 = Tk.Frame(set2_frame)
         setvol2_ent = Tk.Entry(set_ent_frame2, justify="center")
         setcur2_ent = Tk.Entry(set_ent_frame2, justify="center")
+        setvol2_ent.insert(0, self.bkp.voltageSetting2)
+        setcur2_ent.insert(0, self.bkp.currentSetting2)
         v2s = Tk.Label(set_ent_frame2, text="V", font=("Arial", LARGE_TEXT_SIZE))
         a2s = Tk.Label(set_ent_frame2, text="A", font=("Arial", LARGE_TEXT_SIZE))
         setvol2_ent.pack(side=Tk.LEFT, padx=(self.relativePadx * padmult, 0))
@@ -143,9 +152,9 @@ class GUI(Tk.Frame):
         meas_ent_frame1 = Tk.Frame(meas1_frame)
         measvol1_ent = Tk.Entry(meas_ent_frame1)
         meascur1_ent = Tk.Entry(meas_ent_frame1)
-        measvol1_ent.insert(0, "6.000")
+        measvol1_ent.insert(0, self.bkp.voltageMeasured1)
         measvol1_ent.configure(state='readonly', font=("Arial", SMALL_TEXT_SIZE), justify="center")
-        meascur1_ent.insert(0, "6.000")
+        meascur1_ent.insert(0, self.bkp.currentMeasured1)
         meascur1_ent.configure(state='readonly', font=("Arial", SMALL_TEXT_SIZE), justify="center")
         v1m = Tk.Label(meas_ent_frame1, text="V", font=("Arial", LARGE_TEXT_SIZE))
         a1m = Tk.Label(meas_ent_frame1, text="A", font=("Arial", LARGE_TEXT_SIZE))
@@ -160,9 +169,9 @@ class GUI(Tk.Frame):
         meas_ent_frame2 = Tk.Frame(meas2_frame)
         measvol2_ent = Tk.Entry(meas_ent_frame2)
         meascur2_ent = Tk.Entry(meas_ent_frame2)
-        measvol2_ent.insert(0, "6.000")
+        measvol2_ent.insert(0, self.bkp.voltageMeasured2)
         measvol2_ent.configure(state='readonly', font=("Arial", SMALL_TEXT_SIZE), justify="center")
-        meascur2_ent.insert(0, "6.000")
+        meascur2_ent.insert(0, self.bkp.currentMeasured2)
         meascur2_ent.configure(state='readonly', font=("Arial", SMALL_TEXT_SIZE), justify="center")
         v2m = Tk.Label(meas_ent_frame2, text="V", font=("Arial", LARGE_TEXT_SIZE))
         a2m = Tk.Label(meas_ent_frame2, text="A", font=("Arial", LARGE_TEXT_SIZE))
@@ -174,19 +183,27 @@ class GUI(Tk.Frame):
         meas2_frame.grid(row=2, column=2)
 
         pow1_frame = Tk.Frame(ui_frame)
-        var1 = Tk.IntVar()
-        on1 = Tk.Radiobutton(pow1_frame, text="ON", font=("Arial", LARGE_TEXT_SIZE), variable=var1, value=1)
-        off1 = Tk.Radiobutton(pow1_frame, text="OFF", font=("Arial", LARGE_TEXT_SIZE), variable=var1, value=2)
+        self.var1 = Tk.IntVar()  # must be a class variable in order to stay around after the function call
+        on1 = Tk.Radiobutton(pow1_frame, text="ON", font=("Arial", LARGE_TEXT_SIZE), variable=self.var1, value=1)
+        off1 = Tk.Radiobutton(pow1_frame, text="OFF", font=("Arial", LARGE_TEXT_SIZE), variable=self.var1, value=2)
         on1.grid(row=0, column=0)
         off1.grid(row=0, column=1)
+        if self.bkp.chan1on:
+            self.var1.set(1)
+        else:
+            self.var1.set(2)
         pow1_frame.grid(row=3, column=1)
 
         pow2_frame = Tk.Frame(ui_frame)
-        var2 = Tk.IntVar()
-        on2 = Tk.Radiobutton(pow2_frame, text="ON", font=("Arial", LARGE_TEXT_SIZE), variable=var2, value=1)
-        off2 = Tk.Radiobutton(pow2_frame, text="OFF", font=("Arial", LARGE_TEXT_SIZE), variable=var2, value=2)
+        self.var2 = Tk.IntVar()  # must be a class variable in order to stay around after the function call
+        on2 = Tk.Radiobutton(pow2_frame, text="ON", font=("Arial", LARGE_TEXT_SIZE), variable=self.var2, value=1)
+        off2 = Tk.Radiobutton(pow2_frame, text="OFF", font=("Arial", LARGE_TEXT_SIZE), variable=self.var2, value=2)
         on2.grid(row=0, column=0)
         off2.grid(row=0, column=1)
+        if self.bkp.chan2on:
+            self.var2.set(1)
+        else:
+            self.var2.set(2)
         pow2_frame.grid(row=3, column=2)
 
     def center_window(self):
@@ -198,8 +215,10 @@ class GUI(Tk.Frame):
 
 
 def main():
+    HOSTIP = "142.103.235.210"
+    bkp = Bkp.BKPRECISION9173(HOSTIP)
     root = Tk.Tk()
-    app = GUI(root)
+    app = GUI(root, bkp)
     root.mainloop()
 
 

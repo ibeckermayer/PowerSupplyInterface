@@ -209,9 +209,9 @@ current is set to be at (rather than what its actually at).
         :return: float
         """
         if chan == 1:
-            self.send_command("MEAS CURR?")
+            self.send_command("MEAS:CURR?")
         elif chan == 2:
-            self.send_command("MEAS CURR2?")
+            self.send_command("MEAS:CURR2?")
         else:
             raise ChannelError(chan)
         return self.extract_float_readback()
@@ -225,9 +225,9 @@ voltage is set to be at (rather than what its actually at).
         :return: float
         """
         if chan == 1:
-            self.send_command("MEAS VOLT?")
+            self.send_command("MEAS:VOLT?")
         elif chan == 2:
-            self.send_command("MEAS VOLT2?")
+            self.send_command("MEAS:VOLT2?")
         else:
             raise ChannelError(chan)
         return self.extract_float_readback()
