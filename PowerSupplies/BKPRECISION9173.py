@@ -9,7 +9,7 @@ class BKPRECISION9173:
 initialize BKP connection with the proper host ip and port number
         :param host: string with ip address of the device
         """
-        self.SLEEP_TIME = .5  # telnet is ancient and therefore needs some time to send messages
+        self.SLEEP_TIME = .05  # telnet is ancient and therefore needs some time to send messages
         self.host = host  # Set using manual control
         self.port = "5024"  # As described in user manual
         self.name = "BK PRECISION 9173"
