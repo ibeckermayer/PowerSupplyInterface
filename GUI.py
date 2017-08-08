@@ -111,12 +111,16 @@ class GUI(Tk.Frame):
         self.ch2_label.config(font=("Arial", LARGE_TEXT_SIZE))
         self.ch2_frame.grid(row=0, column=2)
 
+        self.vol1ent = Tk.StringVar()  # create string variables for the entries
+        self.cur1ent = Tk.StringVar()
         self.set1_frame = Tk.Frame(self.ui_frame)
         self.set_ent_frame1 = Tk.Frame(self.set1_frame)
-        self.setvol1_ent = Tk.Entry(self.set_ent_frame1, justify="center")
-        self.setcur1_ent = Tk.Entry(self.set_ent_frame1, justify="center")
+        self.setvol1_ent = Tk.Entry(self.set_ent_frame1, justify="center", textvariable=self.vol1ent)
         self.setvol1_ent.insert(0, self.bkp.voltageSetting1)
+        self.setvol1_ent.bind("<Return>", lambda event: self.update_vol1(event))  # bind entry to return key
+        self.setcur1_ent = Tk.Entry(self.set_ent_frame1, justify="center", textvariable=self.cur1ent)
         self.setcur1_ent.insert(0, self.bkp.currentSetting1)
+        self.setcur1_ent.bind("<Return>", lambda event: self.update_cur1(event))
         self.v1s = Tk.Label(self.set_ent_frame1, text="V", font=("Arial", LARGE_TEXT_SIZE))
         self.a1s = Tk.Label(self.set_ent_frame1, text="A", font=("Arial", LARGE_TEXT_SIZE))
         padmult = 5
@@ -131,12 +135,16 @@ class GUI(Tk.Frame):
         self.set_ent_frame1.grid(row=1, columnspan=2)
         self.set1_frame.grid(row=1, column=1)
 
+        self.vol2ent = Tk.StringVar()  # create string variables for the entries
+        self.cur2ent = Tk.StringVar()
         self.set2_frame = Tk.Frame(self.ui_frame)
         self.set_ent_frame2 = Tk.Frame(self.set2_frame)
-        self.setvol2_ent = Tk.Entry(self.set_ent_frame2, justify="center")
-        self.setcur2_ent = Tk.Entry(self.set_ent_frame2, justify="center")
+        self.setvol2_ent = Tk.Entry(self.set_ent_frame2, justify="center", textvariable=self.vol2ent)
         self.setvol2_ent.insert(0, self.bkp.voltageSetting2)
+        self.setvol2_ent.bind("<Return>", lambda event: self.update_vol2(event))  # bind entry to return key
+        self.setcur2_ent = Tk.Entry(self.set_ent_frame2, justify="center", textvariable=self.cur2ent)
         self.setcur2_ent.insert(0, self.bkp.currentSetting2)
+        self.setcur2_ent.bind("<Return>", lambda event: self.update_cur2(event))  # bind entry to return key
         self.v2s = Tk.Label(self.set_ent_frame2, text="V", font=("Arial", LARGE_TEXT_SIZE))
         self.a2s = Tk.Label(self.set_ent_frame2, text="A", font=("Arial", LARGE_TEXT_SIZE))
         self.setvol2_ent.pack(side=Tk.LEFT, padx=(self.relativePadx * padmult, 0))
@@ -211,6 +219,18 @@ class GUI(Tk.Frame):
         else:
             self.var2.set(2)
         self.pow2_frame.grid(row=3, column=2)
+
+    def update_vol1(self, key):
+        self.bkp.set_voltage(1, self.vol1ent.get())
+
+    def update_vol2(self, key):
+        self.bkp.set_voltage(2, self.vol2ent.get())
+
+    def update_cur1(self, key):
+        self.bkp.set_current(1, self.cur1ent.get())
+
+    def update_cur2(self, key):
+        self.bkp.set_current(2, self.cur2ent.get())
 
     def onoff1(self):
         """

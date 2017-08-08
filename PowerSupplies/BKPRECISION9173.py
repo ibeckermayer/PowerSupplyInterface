@@ -112,13 +112,14 @@ set voltage on channel 1 or 2
         """
         if chan == 1:
             self.send_command("VOLT " + str(voltage))
+            debugvar = self.get_set_voltage(1)
             self.voltageSetting1 = self.get_set_voltage(1)
-            if self.voltageSetting1 != voltage:
+            if self.voltageSetting1 != float(voltage):
                 raise ChangeValueError(voltage, self.voltageSetting1)
         elif chan == 2:
             self.send_command("VOLT2 " + str(voltage))
             self.voltageSetting2 = self.get_set_voltage(2)
-            if self.voltageSetting2 != voltage:
+            if self.voltageSetting2 != float(voltage):
                 raise ChangeValueError(voltage, self.voltageSetting2)
         else:
             raise ChannelError(chan)
@@ -132,12 +133,12 @@ set current on channel 1 or 2
         if chan == 1:
             self.send_command("CURR " + str(current))
             self.currentSetting1 = self.get_set_current(1)
-            if self.currentSetting1 != current:
+            if self.currentSetting1 != float(current):
                 raise ChangeValueError(current, self.currentSetting1)
         elif chan == 2:
             self.send_command("CURR2 " + str(current))
             self.currentSetting2 = self.get_set_current(2)
-            if self.currentSetting2 != current:
+            if self.currentSetting2 != float(current):
                 raise ChangeValueError(current, self.currentSetting2)
         else:
             raise ChannelError(chan)
