@@ -35,10 +35,10 @@ function to read all the values from the BKP and set the fields upon a new conne
         self.currentSetting2 = self.get_set_current(2)
         self.voltageSetting1 = self.get_set_voltage(1)
         self.voltageSetting2 = self.get_set_voltage(2)
-        self.currentMeasured1 = self.measure_current(1)
-        self.currentMeasured2 = self.measure_current(2)
-        self.voltageMeasured1 = self.measure_voltage(1)
-        self.voltageMeasured2 = self.measure_voltage(2)
+        self.measure_current(1)
+        self.measure_current(2)
+        self.measure_voltage(1)
+        self.measure_voltage(2)
         self.chan1on = self.is_chan_on(1)
         self.chan2on = self.is_chan_on(2)
 
@@ -112,7 +112,6 @@ set voltage on channel 1 or 2
         """
         if chan == 1:
             self.send_command("VOLT " + str(voltage))
-            debugvar = self.get_set_voltage(1)
             self.voltageSetting1 = self.get_set_voltage(1)
             if self.voltageSetting1 != float(voltage):
                 raise ChangeValueError(voltage, self.voltageSetting1)
@@ -207,15 +206,15 @@ Function to measure the current at the output of one of the channels.
 Note that this is distinct from get_set_current, which checks what the
 current is set to be at (rather than what its actually at).
         :param chan: int (1 or 2)
-        :return: float
         """
         if chan == 1:
             self.send_command("MEAS:CURR?")
+            self.currentMeasured1 = self.extract_float_readback()
         elif chan == 2:
             self.send_command("MEAS:CURR2?")
+            self.currentMeasured2 = self.extract_float_readback()
         else:
             raise ChannelError(chan)
-        return self.extract_float_readback()
 
     def measure_voltage(self, chan):
         """
@@ -223,15 +222,15 @@ Function to measure the voltage at the output of one of the channels.
 Note that this is distinct from get_set_voltage, which checks what the
 voltage is set to be at (rather than what its actually at).
         :param chan: int (1 or 2)
-        :return: float
         """
         if chan == 1:
             self.send_command("MEAS:VOLT?")
+            self.voltageMeasured1 = self.extract_float_readback()
         elif chan == 2:
             self.send_command("MEAS:VOLT2?")
+            self.voltageMeasured2 = self.extract_float_readback()
         else:
             raise ChannelError(chan)
-        return self.extract_float_readback()
 
     def get_set_current(self, chan):
         """
