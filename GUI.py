@@ -206,7 +206,7 @@ class GUI(Tk.Frame):
             self.var1.set(1)
         else:
             self.var1.set(2)
-            self.pow1_frame.grid(row=3, column=1)
+        self.pow1_frame.grid(row=3, column=1)
 
         self.pow2_frame = Tk.Frame(self.ui_frame)
         self.var2 = Tk.IntVar()  # must be a class variable in order to stay around after the function call
