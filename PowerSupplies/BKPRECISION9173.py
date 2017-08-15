@@ -103,7 +103,6 @@ Function for reading back until a given string, returns everything read back
         self.executing = False
         return return_string
 
-
     def set_voltage(self, chan, voltage):
         """
 set voltage on channel 1 or 2
