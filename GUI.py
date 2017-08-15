@@ -7,6 +7,7 @@ https://stackoverflow.com/questions/24832247/constantly-update-label-widgets-fro
 """
 
 import Tkinter as Tk
+import Queue as Q
 from PowerSupplies import BKPRECISION9173 as Bkp
 
 
@@ -14,6 +15,7 @@ from PowerSupplies import BKPRECISION9173 as Bkp
 class GUI(Tk.Frame):
     def __init__(self, parent, power_supply):
         Tk.Frame.__init__(self, parent)
+        self.update_time_ms = 1000  # update measurements every X ms
 
         self.bkp = power_supply
         self.parent = parent
@@ -232,6 +234,37 @@ class GUI(Tk.Frame):
     def update_cur2(self, key):
         self.bkp.set_current(2, self.cur2ent.get())
 
+    def update_measurements(self):
+        """
+Looping function to update the measurement readings every update_time_ms milliseconds
+        """
+        self.bkp.measure_current(1)
+        self.bkp.measure_current(2)
+        self.bkp.measure_voltage(1)
+        self.bkp.measure_voltage(2)
+
+        self.meascur1_ent.configure(state=Tk.NORMAL)
+        self.meascur1_ent.delete(0, len(self.meascur1_ent.get()))
+        self.meascur1_ent.insert(0, str(self.bkp.currentMeasured1))
+        self.meascur1_ent.configure(state='readonly')
+
+        self.meascur2_ent.configure(state=Tk.NORMAL)
+        self.meascur2_ent.delete(0, len(self.meascur2_ent.get()))
+        self.meascur2_ent.insert(0, str(self.bkp.currentMeasured2))
+        self.meascur2_ent.configure(state='readonly')
+
+        self.measvol1_ent.configure(state=Tk.NORMAL)
+        self.measvol1_ent.delete(0, len(self.measvol1_ent.get()))
+        self.measvol1_ent.insert(0, str(self.bkp.voltageMeasured1))
+        self.measvol1_ent.configure(state='readonly')
+
+        self.measvol2_ent.configure(state=Tk.NORMAL)
+        self.measvol2_ent.delete(0, len(self.measvol2_ent.get()))
+        self.measvol2_ent.insert(0, str(self.bkp.voltageMeasured2))
+        self.measvol2_ent.configure(state='readonly')
+
+        self.parent.after(self.update_time_ms, self.update_measurements)
+
     def onoff1(self):
         """
 command function for radio button ch1
@@ -264,6 +297,7 @@ def main():
     bkp = Bkp.BKPRECISION9173(HOSTIP)
     root = Tk.Tk()
     app = GUI(root, bkp)
+    app.update_measurements()
     root.mainloop()
 
 
