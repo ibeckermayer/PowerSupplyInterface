@@ -15,7 +15,7 @@ from PowerSupplies import BKPRECISION9173 as Bkp
 class GUI(Tk.Frame):
     def __init__(self, parent, power_supply):
         Tk.Frame.__init__(self, parent)
-        self.update_time_ms = 100  # update measurements every X ms
+        self.update_time_ms = 1000  # update measurements every X ms
 
         self.bkp = power_supply
         self.parent = parent
