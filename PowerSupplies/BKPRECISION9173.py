@@ -1,5 +1,7 @@
 import telnetlib
 import time
+import csv
+import os.path
 from Errors import *
 
 
@@ -13,6 +15,7 @@ initialize BKP connection with the proper host ip and port number
         self.host = host  # Set using manual control
         self.port = "5024"  # As described in user manual
         self.name = "BK PRECISION 9173"
+        self.logFileName = "Logs/BKPRECISION9173_log.csv"
         self.currentSetting1 = None
         self.voltageSetting1 = None
         self.currentSetting2 = None
@@ -258,3 +261,19 @@ Function to get the voltage the machine is set to run at
         else:
             raise ChannelError(chan)
         return self.extract_float_readback()
+
+    def log_data(self):
+        if not(os.path.isfile(self.logFileName)):
+            header_list = ["Date (D:M:Y)", "Time (H:M:S)", "Current Setting 1", "Current Setting 2", "Voltage Setting 1", "Voltage Setting 2", "Current Measured 1", "Current Measured 2", "Voltage Measured 1", "Voltage Measured 2", "Channel 1 On?", "Channel 2 On?"]
+            with open(self.logFileName, 'wb') as f:
+                wr = csv.writer(f)
+                wr.writerow(header_list)
+            f.close()
+        else:
+            log_list = [time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"), str(self.currentSetting1), str(self.currentSetting2), str(self.voltageSetting1), str(self.voltageSetting2), str(self.currentMeasured1), str(self.currentMeasured2), str(self.voltageMeasured1), str(self.voltageMeasured2), str(self.chan1on), str(self.chan2on)]
+            with open(self.logFileName, 'a') as f:
+                wr = csv.writer(f)
+                wr.writerow(log_list)
+            f.close()
+
+

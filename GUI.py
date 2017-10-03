@@ -263,6 +263,8 @@ Looping function to update the measurement readings every update_time_ms millise
         self.measvol2_ent.insert(0, str(self.bkp.voltageMeasured2))
         self.measvol2_ent.configure(state='readonly')
 
+        self.bkp.log_data()
+
         self.parent.after(self.update_time_ms, self.update_measurements)
 
     def onoff1(self):

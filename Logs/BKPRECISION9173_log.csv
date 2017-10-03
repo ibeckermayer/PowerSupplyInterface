@@ -1,0 +1,4 @@
+Date (D:M:Y),Time (H:M:S),Current Setting 1,Current Setting 2,Voltage Setting 1,Voltage Setting 2,Current Measured 1,Current Measured 2,Voltage Measured 1,Voltage Measured 2,Channel 1 On?,Channel 2 On?
+03/10/2017,13:27:03,1.5,1.5,6.0,6.0,0.0,0.0,0.0,0.0,False,False
+03/10/2017,13:27:05,1.5,1.5,6.0,6.0,0.0,0.0,0.0,6.001,False,True
+03/10/2017,13:27:06,1.5,1.5,6.0,6.0,0.0,0.0,0.0,0.0,False,False
